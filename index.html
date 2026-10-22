@@ -232,6 +232,8 @@ function buildDeco(){
     const x=(lx+rx)*cell, y=oy+(ly+ry)*cell, s=cell, r=Math.max(1,s*0.12), inset=Math.max(1,s*0.14);
     q.save(); q.globalAlpha=0.16; q.shadowColor=col; q.shadowBlur=s*0.5; q.strokeStyle=col; q.lineWidth=Math.max(1,s*0.1);
     q.beginPath(); const X=x+inset,Y=y+inset,Wd=s-2*inset,Hd=s-2*inset; q.moveTo(X+r,Y); q.arcTo(X+Wd,Y,X+Wd,Y+Hd,r); q.arcTo(X+Wd,Y+Hd,X,Y+Hd,r); q.arcTo(X,Y+Hd,X,Y,r); q.arcTo(X,Y,X+Wd,Y,r); q.closePath(); q.stroke(); q.restore(); })); }
+  q.save(); q.globalAlpha=0.38; q.font='700 '+Math.round(cell*0.78)+'px "Barlow Semi Condensed", Impact, "Arial Narrow", sans-serif'; q.textAlign='center'; q.textBaseline='middle';
+  q.fillStyle=YEL; q.shadowColor=YEL; q.shadowBlur=cell*0.4; q.fillText('VROEGER WAS ALLES BETER', w/2, oy+6*cell); q.restore();
   // side strip: one column of 5 outlined cells
   const ss=Math.max(8,Math.round(cell*0.55)), strip=document.createElement('canvas'); strip.width=ss*DPR; strip.height=ss*5*DPR; const p=strip.getContext('2d'); p.setTransform(DPR,0,0,DPR,0,0);
   const cols=[C.Z,C.L,C.O,C.S,C.I,C.J,C.T];
