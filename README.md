@@ -2,7 +2,7 @@
 
 Vallende neon-blokken in "Vroeger was alles beter"-stijl met een LEDJOCKEY-tintje.
 
-**Speel / installeer:** https://jimmyhonderd.github.io/blok-inator/
+**Speel / installeer:** https://jimmyhonderd.github.io/Blok-inator/
 
 ## Installeren op Android
 
