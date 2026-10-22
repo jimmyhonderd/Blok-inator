@@ -130,8 +130,8 @@ let keys={}, das=0, arr=0;
 let touch=null;
 function layoutButtons(){
   btns=[]; if(land) return;
-  const bh=Math.min(90,H*0.12), by=H-bh-10, n=5, bw=Math.min(90,(W-24)/n-6), gap=(W-n*bw)/(n+1);
-  const defs=[['◀','left'],['⟲','rot'],['▼','soft'],['▶','right'],['⤓','hard']];
+  const bh=Math.min(90,H*0.12), by=H-bh-10, n=4, bw=Math.min(100,(W-24)/n-6), gap=(W-n*bw)/(n+1);
+  const defs=[['◀','left'],['⟲','rotl'],['⟳','rot'],['▶','right']];
   defs.forEach(([lab,act],i)=>btns.push({x:gap+i*(bw+gap),y:by,w:bw,h:bh,lab,act}));
 }
 function btnAt(x,y){ return btns.find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h); }

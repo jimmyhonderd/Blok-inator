@@ -12,7 +12,7 @@ Vallende neon-blokken in "Vroeger was alles beter"-stijl met een LEDJOCKEY-tintj
 
 ## Besturing
 
-- Touch: vegen links/rechts = verplaatsen, tik = draaien, veeg omlaag = zachte val, snelle veeg omlaag = harde val, veeg omhoog of tik op HOLD = vasthouden. Knoppen onderin (staand).
+- Touch: vegen links/rechts = verplaatsen, tik = draaien, veeg omlaag = zachte val, snelle veeg omlaag = harde val, veeg omhoog of tik op HOLD = vasthouden. Knoppen onderin (staand): links, draai linksom, draai rechtsom, rechts.
 - Pc: pijltjes, Z/X = draaien, spatie = harde val, C = hold, P = pauze.
 
 ## Wat erin zit
