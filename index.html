@@ -218,15 +218,47 @@ function hud(){
     label('SCORE',bw*1.5,top,fs,HUD_PINK,'center'); label(String(score).padStart(6,'0'),bw*1.5,top+fs*1.3,fs*1.4,INK,'center');
     label('LEVEL '+level,bw*2.5,top,fs,HUD_PINK,'center'); label(lines+' LINES',bw*2.5,top+fs*1.3,fs*1.1,INK,'center');
     label('NEXT',bw*3.5,top,fs,HUD_CYAN,'center'); miniPiece(nextQ[0],bw*3.5,top+34,s*0.55,1);
-    label('BEST '+best,W/2,H-Math.min(90,H*0.12)-28,fs*0.9,YEL,'center');
+    label('BEST '+best,W/2,H-Math.min(90,H*0.12)-28,fs*0.9,YEL,'center'); label('VWAB · VROEGER WAS ALLES BETER',W/2,H-Math.min(90,H*0.12)-46,fs*0.75,'rgba(34,230,255,.55)','center','',0);
   }
   // pause glyph
   g.save(); g.fillStyle='rgba(223,246,255,.5)'; g.fillRect(W-30,14,5,16); g.fillRect(W-20,14,5,16); g.restore();
+}
+let deco=null;
+function buildDeco(){
+  const w=COLS*cell, h=ROWS*cell, c=document.createElement('canvas'); c.width=w*DPR; c.height=h*DPR; const q=c.getContext('2d'); q.setTransform(DPR,0,0,DPR,0,0);
+  const letters=[['V',C.I,0,0],['W',C.T,5,0],['A',C.O,0,7],['B',C.S,5,7]]; const oy=Math.floor((ROWS-12)/2)*cell;
+  const saveG=g; // draw with neonCell onto q via temporary swap
+  for(const [l,col,lx,ly] of letters){ LET[l].forEach((row,ry)=>[...row].forEach((v,rx)=>{ if(v!=='1') return;
+    const x=(lx+rx)*cell, y=oy+(ly+ry)*cell, s=cell, r=Math.max(1,s*0.12), inset=Math.max(1,s*0.14);
+    q.save(); q.globalAlpha=0.16; q.shadowColor=col; q.shadowBlur=s*0.5; q.strokeStyle=col; q.lineWidth=Math.max(1,s*0.1);
+    q.beginPath(); const X=x+inset,Y=y+inset,Wd=s-2*inset,Hd=s-2*inset; q.moveTo(X+r,Y); q.arcTo(X+Wd,Y,X+Wd,Y+Hd,r); q.arcTo(X+Wd,Y+Hd,X,Y+Hd,r); q.arcTo(X,Y+Hd,X,Y,r); q.arcTo(X,Y,X+Wd,Y,r); q.closePath(); q.stroke(); q.restore(); })); }
+  // side strip: one column of 5 outlined cells
+  const ss=Math.max(8,Math.round(cell*0.55)), strip=document.createElement('canvas'); strip.width=ss*DPR; strip.height=ss*5*DPR; const p=strip.getContext('2d'); p.setTransform(DPR,0,0,DPR,0,0);
+  const cols=[C.Z,C.L,C.O,C.S,C.I,C.J,C.T];
+  deco={wm:c,strip:strip,ss:ss,cols:cols};
+}
+function stripAt(x,y,col,alpha){ const ss=deco.ss, inset=Math.max(1,ss*0.14), r=Math.max(1,ss*0.12);
+  g.save(); g.globalAlpha=alpha; g.strokeStyle=col; g.lineWidth=Math.max(1,ss*0.1); g.shadowColor=col; g.shadowBlur=ss*0.4;
+  for(let i=0;i<5;i++){ rr(x+inset,y+i*ss+inset,ss-2*inset,ss-2*inset,r); g.stroke(); } g.restore(); }
+function decoDraw(t){
+  if(!deco||deco.cell!==cell){ buildDeco(); deco.cell=cell; }
+  const ss=deco.ss, n=deco.cols.length;
+  const margin=fx, h=ROWS*cell;
+  if(margin>ss*2.2){ // room beside the field
+    let offs;
+    if(land){ offs=[ss*1.6]; const pe=cell*4.8; for(let k=0;k<3;k++){ const o=pe+ss*0.6+k*ss*1.6; if(o+ss<margin) offs.push(o); } }
+    else { offs=[]; for(let k=0;k<3;k++){ const o=ss*1.6+k*ss*1.6; if(o+ss*0.2<margin) offs.push(o); } }
+    for(let side=0;side<2;side++) for(let k=0;k<offs.length;k++){
+      const x= side? fx+COLS*cell+offs[k]-ss : fx-offs[k];
+      for(let j=0;j<Math.floor(h/(ss*6));j++){ const idx=(k+j*2+side*3)%n; const a=0.35+0.3*Math.sin(t*0.0015+j*1.3+k+side*2);
+        stripAt(x,fy+j*ss*6,deco.cols[idx],a); } }
+  }
 }
 function field(){
   const w=COLS*cell, h=ROWS*cell;
   g.save(); if(shake>0) g.translate((Math.random()*shake-shake/2),(Math.random()*shake-shake/2));
   g.fillStyle='#02050c'; g.fillRect(fx,fy,w,h);
+  if(deco&&deco.cell===cell) g.drawImage(deco.wm,fx,fy,w,h);
   g.strokeStyle=GRID; g.lineWidth=1; g.beginPath(); for(let i=0;i<=COLS;i++){ g.moveTo(fx+i*cell+.5,fy); g.lineTo(fx+i*cell+.5,fy+h); } for(let j=0;j<=ROWS;j++){ g.moveTo(fx,fy+j*cell+.5); g.lineTo(fx+w,fy+j*cell+.5); } g.stroke();
   g.save(); g.strokeStyle=tetrisT>0?YEL:'rgba(34,230,255,.7)'; g.lineWidth=2; g.shadowColor=tetrisT>0?YEL:HUD_CYAN; g.shadowBlur=tetrisT>0?30:14; rr(fx-3,fy-3,w+6,h+6,8); g.stroke(); g.restore();
   for(let y=HIDDEN;y<ROWS+HIDDEN;y++) for(let x=0;x<COLS;x++){ const v=board[y][x]; if(!v) continue;
@@ -263,7 +295,7 @@ function veil(){ g.fillStyle='rgba(0,0,0,.72)'; g.fillRect(0,0,W,H); }
 function draw(t){
   g.fillStyle='#000'; g.fillRect(0,0,W,H);
   if(state==='title'){ title(t); return; }
-  field(); hud(); buttons();
+  decoDraw(t); field(); hud(); buttons();
   if(state==='pause'){ veil(); label('PAUZE',W/2,H*0.42,Math.min(56,W*0.12),YEL,'center','anton'); label('TIK OM VERDER TE GAAN',W/2,H*0.42+70,16,INK,'center'); }
   if(state==='over'){ veil(); label('GAME OVER',W/2,H*0.36,Math.min(56,W*0.12),HUD_PINK,'center','anton'); label('SCORE '+score,W/2,H*0.36+70,22,INK,'center'); label(lines+' LINES · LEVEL '+level,W/2,H*0.36+100,16,HUD_CYAN,'center'); label(score>=best&&score>0?'NIEUW RECORD!':'BEST '+best,W/2,H*0.36+130,18,YEL,'center'); label('TIK VOOR NIEUW SPEL',W/2,H*0.36+170,16,INK,'center'); }
 }
